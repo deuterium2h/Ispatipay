@@ -6,7 +6,6 @@
 
 package ispatipay;
 
-import javax.swing.JOptionPane;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
