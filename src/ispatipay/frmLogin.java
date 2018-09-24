@@ -7,7 +7,10 @@
 package ispatipay;
 
 import java.io.File;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -28,34 +31,7 @@ public class frmLogin extends javax.swing.JFrame {
     Connection conn = null;
     PreparedStatement pst = null;
     ResultSet rs = null;
-/**
-    static String database;
-    static String[] params;
 
-    public String getDatabase() {
-        return database;
-    }
-
-    public String[] getParams() {
-        return params;
-    }
-    
-    public void setDatabase(String db) {
-        this.database = db;
-    }
-
-    public void setParams(String[] opt) {
-        this.params = opt;
-    }
-
-    public Connection getConn() {
-        return conn;
-    }
-
-    public void setConn(Connection c) {
-        this.conn = c;
-    }
-*/
     private boolean isItemsSet() {
         return ( txtUsername.getText().length() > 0 && txtPassword.getText().length() > 0 );
     }
@@ -64,6 +40,11 @@ public class frmLogin extends javax.swing.JFrame {
         return ( !conn.isClosed() );
     }
 
+    private void selectDatabase() {
+        dlgDBSelector.setResizable(false);
+        dlgDBSelector.setLocationRelativeTo(null);
+        dlgDBSelector.setVisible(true);
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -98,6 +79,7 @@ public class frmLogin extends javax.swing.JFrame {
         dlgDBSelector.setTitle("Select a database");
         dlgDBSelector.setModal(true);
         dlgDBSelector.setResizable(false);
+        dlgDBSelector.setSize(new java.awt.Dimension(402, 244));
 
         pnlDBContainer.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -357,12 +339,7 @@ public class frmLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_cmdCancelActionPerformed
 
     private void cmdSetDBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdSetDBActionPerformed
-//        frmDatabaseSelector dbSelect = frmDatabaseSelector.getObj();
-//        dbSelect.setVisible(true);
-        dlgDBSelector.setResizable(false);
-        dlgDBSelector.setSize(402, 244);
-        dlgDBSelector.setLocationRelativeTo(null);
-        dlgDBSelector.setVisible(true);
+        selectDatabase();
     }//GEN-LAST:event_cmdSetDBActionPerformed
 
     private void txtUsernameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUsernameKeyReleased
@@ -395,20 +372,27 @@ public class frmLogin extends javax.swing.JFrame {
 
     private void cmdLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdLoginActionPerformed
         String user = txtUsername.getText();
-        String pass = Hash.generateHash(txtPassword.getText(), ""); ;
+        String pass = Helper.generateHash(txtPassword.getText());
+        String sql = "SELECT * FROM accounts WHERE username = ? AND password = ?";
 
         try {
-            if ( true ) {
+
+            pst = conn.prepareStatement(sql);
+            pst.setString(1, user);
+            pst.setString(2, pass);
+            rs = pst.executeQuery();
+
+            if ( rs.next() ) {
                 frmMain mf = new frmMain();
                 mf.setVisible(true);
                 dispose();
             }
             else {
-                JOptionPane.showMessageDialog(null, "Incorrect login credentials, please try again", "Incorrect Credentials", JOptionPane.WARNING_MESSAGE);
+                Helper.messageDialog("Incorrect login credentials, please try again", "Incorrect Credentials", 2);
             }
         }
         catch ( Exception e ) {
-            
+            System.err.println(e);
         }
     }//GEN-LAST:event_cmdLoginActionPerformed
 
@@ -477,14 +461,12 @@ public class frmLogin extends javax.swing.JFrame {
 
         try {
             if ( isConnectionSet() ) {
-                JOptionPane.showMessageDialog(null, "Successfully connected to Database", 
-                    "Connection Success!", JOptionPane.INFORMATION_MESSAGE);
+                Helper.messageDialog("Successfully connected to Database", "Connection Success!", 1);
                 dlgDBSelector.hide();
             }
         }
         catch ( Exception e ) {
-            JOptionPane.showMessageDialog(null, "Cannot connect to Database!\nPlease try again.", 
-                "Connection Failed!", JOptionPane.ERROR_MESSAGE);
+            Helper.messageDialog("Cannot connect to Database!\nPlease try again.", "Connection Failed!", 3);
         }
     }//GEN-LAST:event_cmdDBOkayActionPerformed
 
@@ -539,36 +521,24 @@ public class frmLogin extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox cboDBName;
-    private javax.swing.JComboBox cboDatabase;
     private javax.swing.JCheckBox chkDBPass;
-    private javax.swing.JCheckBox chkDBPassword;
-    private javax.swing.JButton cmdBrowse;
     private javax.swing.JButton cmdCancel;
-    private javax.swing.JButton cmdClose;
     private javax.swing.JButton cmdDBBrowse;
     private javax.swing.JButton cmdDBClose;
     private javax.swing.JButton cmdDBOkay;
     private javax.swing.JButton cmdLogin;
-    private javax.swing.JButton cmdOkay;
     private javax.swing.JButton cmdSetDB;
     private javax.swing.JDialog dlgDBSelector;
     private javax.swing.JLabel lblDBLocation;
     private javax.swing.JLabel lblDBName;
-    private javax.swing.JLabel lblDBPath;
     private javax.swing.JLabel lblDBUser;
-    private javax.swing.JLabel lblDBUsername;
-    private javax.swing.JLabel lblDatabase;
     private javax.swing.JLabel lblPassword;
     private javax.swing.JLabel lblUsername;
     private javax.swing.JPanel pnlContainer;
-    private javax.swing.JPanel pnlContainer1;
     private javax.swing.JPanel pnlDBContainer;
     private javax.swing.JTextField txtDBLocation;
     private javax.swing.JPasswordField txtDBPass;
-    private javax.swing.JPasswordField txtDBPassword;
-    private javax.swing.JTextField txtDBPath;
     private javax.swing.JTextField txtDBUser;
-    private javax.swing.JTextField txtDBUsername;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
