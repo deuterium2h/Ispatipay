@@ -7,6 +7,7 @@
 package ispatipay;
 
 import java.security.*;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 import java.sql.Timestamp;
 
@@ -102,7 +103,23 @@ public class Helper {
      * @return Timestamp in String format.
      */
     public static String getTimestamp() {
+
         Timestamp ts = new Timestamp((new java.util.Date()).getTime());
         return ts.toString();
+    }
+
+    /**
+     * Closes the PreparedStatement, and ResultSet Instance if the database is SQLite.
+     * 
+     * @param PreparedStatement pst
+     * @param ResultSet rs
+     * @throws SQLException Throws SQLException if both are not Instantiated/Defined.
+     */
+    public static void closeIfSqlite(java.sql.PreparedStatement pst, java.sql.ResultSet rs) throws SQLException {
+
+        if ( Database.getDatabase().toLowerCase().equals("sqlite") ) {
+            if ( pst != null ) pst.close();
+            if ( rs != null ) rs.close();
+        }
     }
 }

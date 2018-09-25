@@ -9,6 +9,9 @@ package ispatipay;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -19,8 +22,19 @@ public class frmRegister extends javax.swing.JFrame {
     /**
      * Creates new form frmRegister
      */
-    public frmRegister() {
+    private frmRegister() {
         initComponents();
+        conn = Database.getConnection();
+    }
+
+    private static frmRegister obj = null;
+
+    public static frmRegister getObj(){
+        if ( obj == null ) {
+            obj = new frmRegister();
+        }
+
+        return obj;
     }
 
     Connection conn = null;
@@ -34,13 +48,31 @@ public class frmRegister extends javax.swing.JFrame {
         int cpass = txtConfirmPassword.getText().length();
         int level = ((String) cboUserLevel.getSelectedItem()).length();
 
-        return ( user == 0 && pass == 0 && cpass == 0 && level == 0 );
+        return !( user == 0 || pass == 0 || cpass == 0 || level == 1 );
     }
-    
+
     private boolean passwordsMatched() {
         return ( txtPassword.getText().equals(txtConfirmPassword.getText()) );
     }
-    
+
+    private boolean passwordIsValid() {
+
+        String password = txtPassword.getText();
+        boolean hasChar = false;
+        boolean hasDigit = false;
+
+        for ( char c : password.toCharArray() ) {
+            if ( Character.isLetter(c) ) {
+                hasChar = true;
+            }
+            else if ( Character.isDigit(c) ) {
+                hasDigit = true;
+            }
+        }
+
+        return ( password.length() >=8 && hasChar && hasDigit );
+    }
+
     private boolean usernameIsUnique() {
 
         String sql = "SELECT * FROM accounts WHERE username = ?";
@@ -73,18 +105,27 @@ public class frmRegister extends javax.swing.JFrame {
 
             pst = conn.prepareStatement(sql);
             pst.setString(1, txtUsername.getText());
-            pst.setString(2, txtPassword.getText());
+            pst.setString(2, Helper.generateHash(txtPassword.getText()));
             pst.setString(3, (String) cboUserLevel.getSelectedItem());
             pst.setString(4, currTime);
             pst.setString(5, currTime);
             pst.execute();
 
-            Helper.messageDialog("Registration Success!", "", 1);
+            Helper.messageDialog("Registration Success!", "Account Created", 1);
+            Helper.closeIfSqlite(pst, rs);
         }
-        catch( Exception e ){
+        catch( Exception e ) {
             System.err.println(e);
         }
     }
+
+    private void clearFields() {
+        txtUsername.setText("");
+        txtPassword.setText("");
+        txtConfirmPassword.setText("");
+        cboUserLevel.setSelectedIndex(0);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -106,7 +147,7 @@ public class frmRegister extends javax.swing.JFrame {
         lblUserLevel = new javax.swing.JLabel();
         cboUserLevel = new javax.swing.JComboBox();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Register New User");
         setResizable(false);
 
@@ -224,8 +265,9 @@ public class frmRegister extends javax.swing.JFrame {
 
     private void cmdRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdRegisterActionPerformed
 
-        if ( fieldsNotBlank() && passwordsMatched() && usernameIsUnique() ) {
+        if ( fieldsNotBlank() && passwordIsValid() && passwordsMatched() && usernameIsUnique() ) {
             addAccount();
+            clearFields();
         }
         else if ( !passwordsMatched() ) {
             Helper.messageDialog("Passwords didn't match.\nPlease try again!", "Incorrect Password", 2);
@@ -233,13 +275,20 @@ public class frmRegister extends javax.swing.JFrame {
         else if ( !usernameIsUnique() ) {
             Helper.messageDialog("Username already taken.\nPlease try other username!", "Username taken", 2);
         }
+        else if ( !fieldsNotBlank() ) {
+            Helper.messageDialog("Some fields are blank.\nPlease fill-up the fields and try again.", "Blank Fields", 2);
+        }
+        else if ( !passwordIsValid() ) {
+            Helper.messageDialog("Password should be:\n1. At least 8 characters.\n2. Contains a letter.\n3. Contains a number.", "Password condition not met", 2);
+        }
         else {
-            Helper.messageDialog("Some fields are blank.\nPlease fill-up the fields and try again.", "Blank Fields!", 2);
+            Helper.messageDialog("Unknown error occured", "Please try again", 2);
         }
     }//GEN-LAST:event_cmdRegisterActionPerformed
 
     private void cmdCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdCancelActionPerformed
-        System.exit(0);
+        clearFields();
+        dispose();
     }//GEN-LAST:event_cmdCancelActionPerformed
 
     /**

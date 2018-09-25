@@ -6,6 +6,7 @@
 
 package ispatipay;
 
+import com.alee.laf.WebLookAndFeel;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -30,6 +31,8 @@ public class frmLogin extends javax.swing.JFrame {
     Connection conn = null;
     PreparedStatement pst = null;
     ResultSet rs = null;
+
+    int click = 0;
 
     private boolean isItemsSet() {
         return ( txtUsername.getText().length() > 0 && txtPassword.getText().length() > 0 );
@@ -75,6 +78,7 @@ public class frmLogin extends javax.swing.JFrame {
         cmdLogin = new javax.swing.JButton();
         cmdCancel = new javax.swing.JButton();
         cmdSetDB = new javax.swing.JButton();
+        lblRegister = new javax.swing.JLabel();
 
         dlgDBSelector.setTitle("Select a database");
         dlgDBSelector.setModal(true);
@@ -271,6 +275,12 @@ public class frmLogin extends javax.swing.JFrame {
             }
         });
 
+        lblRegister.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblRegisterMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlContainerLayout = new javax.swing.GroupLayout(pnlContainer);
         pnlContainer.setLayout(pnlContainerLayout);
         pnlContainerLayout.setHorizontalGroup(
@@ -278,12 +288,6 @@ public class frmLogin extends javax.swing.JFrame {
             .addGroup(pnlContainerLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlContainerLayout.createSequentialGroup()
-                        .addComponent(cmdSetDB)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
-                        .addComponent(cmdLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(cmdCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlContainerLayout.createSequentialGroup()
                         .addGroup(pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblUsername)
@@ -291,7 +295,15 @@ public class frmLogin extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtUsername)
-                            .addComponent(txtPassword))))
+                            .addComponent(txtPassword)))
+                    .addGroup(pnlContainerLayout.createSequentialGroup()
+                        .addComponent(cmdSetDB)
+                        .addGap(31, 31, 31)
+                        .addComponent(lblRegister, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 31, Short.MAX_VALUE)
+                        .addComponent(cmdLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(cmdCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         pnlContainerLayout.setVerticalGroup(
@@ -306,10 +318,12 @@ public class frmLogin extends javax.swing.JFrame {
                     .addComponent(lblPassword)
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
-                .addGroup(pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cmdLogin)
-                    .addComponent(cmdCancel)
-                    .addComponent(cmdSetDB))
+                .addGroup(pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(cmdLogin)
+                        .addComponent(cmdCancel)
+                        .addComponent(cmdSetDB))
+                    .addComponent(lblRegister, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -352,7 +366,7 @@ public class frmLogin extends javax.swing.JFrame {
             }
         }
         catch ( Exception e ) {
-        
+            System.err.println(e);
         }
     }//GEN-LAST:event_txtUsernameKeyReleased
 
@@ -366,7 +380,7 @@ public class frmLogin extends javax.swing.JFrame {
             }
         }
         catch ( Exception e ) {
-        
+            System.err.println(e);
         }
     }//GEN-LAST:event_txtPasswordKeyReleased
 
@@ -383,13 +397,16 @@ public class frmLogin extends javax.swing.JFrame {
             rs = pst.executeQuery();
 
             if ( rs.next() ) {
-                frmMain mf = new frmMain();
+                Helper.messageDialog("You are now logged in!", "Login success!", 1);
+                frmMain mf = frmMain.getObj();
                 mf.setVisible(true);
                 dispose();
             }
             else {
                 Helper.messageDialog("Incorrect login credentials, please try again", "Incorrect Credentials", 2);
             }
+
+            Helper.closeIfSqlite(pst, rs);
         }
         catch ( Exception e ) {
             System.err.println(e);
@@ -457,7 +474,7 @@ public class frmLogin extends javax.swing.JFrame {
             params[1] = ( dbPass.length() == 0 )  ? dbUser : dbPass;
         }
 
-        conn = dbConnector.connectTo(database, params);
+        conn = Database.getConnection(database, params);
 
         try {
             if ( isConnectionSet() ) {
@@ -483,6 +500,15 @@ public class frmLogin extends javax.swing.JFrame {
         String dbPath = f.getAbsolutePath();
         txtDBLocation.setText(dbPath);
     }//GEN-LAST:event_cmdDBBrowseActionPerformed
+
+    private void lblRegisterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblRegisterMouseClicked
+        click++;
+
+        if ( click % 5 == 0) {
+            frmRegister reg = frmRegister.getObj();
+            reg.setVisible(true);
+        }
+    }//GEN-LAST:event_lblRegisterMouseClicked
 
     /**
      * @param args the command line arguments
@@ -514,6 +540,7 @@ public class frmLogin extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                WebLookAndFeel.install();
                 new frmLogin().setVisible(true);
             }
         });
@@ -533,6 +560,7 @@ public class frmLogin extends javax.swing.JFrame {
     private javax.swing.JLabel lblDBName;
     private javax.swing.JLabel lblDBUser;
     private javax.swing.JLabel lblPassword;
+    private javax.swing.JLabel lblRegister;
     private javax.swing.JLabel lblUsername;
     private javax.swing.JPanel pnlContainer;
     private javax.swing.JPanel pnlDBContainer;

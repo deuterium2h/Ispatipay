@@ -21,7 +21,7 @@ public class Ispatipay {
     String[] credentials = {"username/path","password"};
 
     public Ispatipay() {
-        conn = dbConnector.connectTo("Oracle", credentials);
+//        conn = DatabaseConnector.getConnection("Oracle", credentials);
         System.out.println(System.getProperty("user.name"));
     }
 
@@ -74,13 +74,5 @@ public class Ispatipay {
         Ispatipay isptpy = new Ispatipay();
         isptpy.getSomeInfo("XOM");
         String encrypted = Ispatipay.encryptPassword("password");//"";
-
-        if (encrypted.equals("5f4dcc3b5aa765d61d8327deb882cf99")) {
-            System.out.println("Correct!!");
-        }
-        else {
-            System.err.println("SAD!");
-        }
     }
-    
 }
