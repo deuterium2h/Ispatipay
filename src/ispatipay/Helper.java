@@ -6,10 +6,15 @@
 
 package ispatipay;
 
-import java.security.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.JOptionPane;
 import java.sql.Timestamp;
+import net.proteanit.sql.DbUtils;
+
 
 /**
  *
@@ -20,10 +25,10 @@ public class Helper {
     /**
      * Generates a salt that will be used in generating hash.
      * 
-     * @param String text
+     * @param text A string that will be used to generate a salt for hash generation.
      * @return A salt used in generating hash.
      */
-    public static String generateSalt (String text) {
+    public static String generateSalt ( String text ) {
 
         String salt = "";
         char median;
@@ -54,10 +59,10 @@ public class Helper {
     /**
      * Generates a hash of the text.
      * 
-     * @param String text
+     * @param text The String that will be used to generate the hash.
      * @return A String generated hash from the String received.
      */
-    public static String generateHash (String text) {
+    public static String generateHash ( String text ) {
 
         String generatedHash = null;
         String salt = generateSalt(text);
@@ -75,7 +80,7 @@ public class Helper {
 
             generatedHash = sb.toString();
         }
-        catch (NoSuchAlgorithmException e) {
+        catch ( NoSuchAlgorithmException e ) {
             System.err.println(e);
         }
 
@@ -85,16 +90,16 @@ public class Helper {
     /**
      * Simplified method for JOptionPane.showMessageDialog();
      * 
-     * @param String message
-     * @param String title
-     * @param int icon
-     *  0 = QUESTION_MESSAGE
-     *  1 = INFORMATION_MESSAGE
-     *  2 = WARNING_MESSAGE
+     * @param message A String that was passed as the message of the MessageDialog.
+     * @param title A String that was passed as the title for the MessageDialog. 
+     * @param icon integer that was passed.<br>
+     *  0 = QUESTION_MESSAGE<br>
+     *  1 = INFORMATION_MESSAGE<br>
+     *  2 = WARNING_MESSAGE<br>
      *  4 = ERROR_MESSAGE
      */
-    public static void messageDialog(String message, String title, int icon) {
-        JOptionPane.showMessageDialog(null, message, title, icon);
+    public static void messageDialog( String message, String title, int icon ) {
+        javax.swing.JOptionPane.showMessageDialog(null, message, title, icon);
     }
 
     /**
@@ -111,15 +116,66 @@ public class Helper {
     /**
      * Closes the PreparedStatement, and ResultSet Instance if the database is SQLite.
      * 
-     * @param PreparedStatement pst
-     * @param ResultSet rs
+     * @param pst PreparedStatement instance that was passed.
+     * @param rs ResultSet instance that was passed.
      * @throws SQLException Throws SQLException if both are not Instantiated/Defined.
      */
-    public static void closeIfSqlite(java.sql.PreparedStatement pst, java.sql.ResultSet rs) throws SQLException {
+    public static void closeIfSqlite( PreparedStatement pst, ResultSet rs ) {
 
-        if ( Database.getDatabase().toLowerCase().equals("sqlite") ) {
-            if ( pst != null ) pst.close();
-            if ( rs != null ) rs.close();
+        try {
+            if (Database.getDatabase().toLowerCase().equals("sqlite")) {
+                if (pst != null) {
+                    pst.close();
+                }
+                if (rs != null) {
+                    rs.close();
+                }
+            }
+        }
+        catch ( SQLException e ) {
+            System.err.println(e);
+        }
+    }
+
+    /**
+     * A method that will check the length of JTextField passed.
+     * 
+     * @param textField JTextField object that was passed.
+     * @return Returns true if the JTextField is blank. Else false.
+     */
+    public static boolean isTextFieldBlank( javax.swing.JTextField textField ) {
+        return ( textField.getText().length() == 0 );
+    }
+
+    /**
+     * 
+     * @param jtable Pass the JTable to be updated.
+     * @param conn Connection instance
+     * @param table  Pass the table that the JTable will use as a model.
+     */
+    public static void loadTable( javax.swing.JTable jtable, Connection conn, String table ) {
+
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+        String sql = ("select * from " + table).toUpperCase();
+
+        try {
+            pst = conn.prepareStatement(sql);
+            rs = pst.executeQuery();
+            jtable.setModel(DbUtils.resultSetToTableModel(rs));
+        }
+        catch ( SQLException e ) {
+                System.err.println(e);
+        }
+        finally {
+
+            try {
+                rs.close();
+                pst.close();
+            }
+            catch (SQLException e) {
+                System.err.println(e);
+            }
         }
     }
 }

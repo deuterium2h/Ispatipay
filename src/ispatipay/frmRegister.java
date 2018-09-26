@@ -10,8 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -87,7 +85,7 @@ public class frmRegister extends javax.swing.JFrame {
                 return false;
             }
         }
-        catch ( Exception e ) {
+        catch ( SQLException e ) {
             System.err.println(e);
         }
 
@@ -112,10 +110,12 @@ public class frmRegister extends javax.swing.JFrame {
             pst.execute();
 
             Helper.messageDialog("Registration Success!", "Account Created", 1);
-            Helper.closeIfSqlite(pst, rs);
         }
-        catch( Exception e ) {
+        catch( SQLException e ) {
             System.err.println(e);
+        }
+        finally {
+            Helper.closeIfSqlite(pst, rs);
         }
     }
 
@@ -319,10 +319,8 @@ public class frmRegister extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new frmRegister().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new frmRegister().setVisible(true);
         });
     }
 

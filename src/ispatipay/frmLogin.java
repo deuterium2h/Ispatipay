@@ -48,6 +48,18 @@ public class frmLogin extends javax.swing.JFrame {
         dlgDBSelector.setVisible(true);
     }
 
+    private void resetDBFormFields() {
+        txtDBUser.setEnabled(false);
+        txtDBLocation.setEnabled(false);
+        txtDBLocation.setText("");
+        cmdDBOkay.setEnabled(false);
+        cmdDBBrowse.setEnabled(false);
+        chkDBPass.setEnabled(false);
+        chkDBPass.setSelected(false);
+        txtDBPass.setText("");
+        txtDBPass.setEnabled(false);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -365,7 +377,7 @@ public class frmLogin extends javax.swing.JFrame {
                 cmdLogin.setEnabled(false);
             }
         }
-        catch ( Exception e ) {
+        catch ( SQLException e ) {
             System.err.println(e);
         }
     }//GEN-LAST:event_txtUsernameKeyReleased
@@ -379,7 +391,7 @@ public class frmLogin extends javax.swing.JFrame {
                 cmdLogin.setEnabled(false);
             }
         }
-        catch ( Exception e ) {
+        catch ( SQLException e ) {
             System.err.println(e);
         }
     }//GEN-LAST:event_txtPasswordKeyReleased
@@ -405,45 +417,40 @@ public class frmLogin extends javax.swing.JFrame {
             else {
                 Helper.messageDialog("Incorrect login credentials, please try again", "Incorrect Credentials", 2);
             }
-
-            Helper.closeIfSqlite(pst, rs);
         }
-        catch ( Exception e ) {
+        catch ( SQLException e ) {
             System.err.println(e);
+        }
+        finally {
+            Helper.closeIfSqlite(pst, rs);
         }
     }//GEN-LAST:event_cmdLoginActionPerformed
 
     private void cboDBNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboDBNameActionPerformed
         String db = (String) cboDBName.getSelectedItem();
 
-        if ( db == "MySQL" || db == "Oracle" ) {
-            txtDBUser.setEnabled(true);
-            txtDBLocation.setEnabled(false);
-            txtDBLocation.setText("");
-            chkDBPass.setEnabled(true);
-            cmdDBOkay.setEnabled(true);
-            cmdDBBrowse.setEnabled(false);
-        }
-        else if ( db == "Sqlite" ) {
-            txtDBLocation.setEnabled(true);
-            txtDBUser.setEnabled(false);
-            chkDBPass.setEnabled(false);
-            chkDBPass.setSelected(false);
-            txtDBPass.setEnabled(false);
-            txtDBPass.setText("");
-            cmdDBOkay.setEnabled(true);
-            cmdDBBrowse.setEnabled(true);
-        }
-        else {
-            txtDBUser.setEnabled(false);
-            txtDBLocation.setEnabled(false);
-            txtDBLocation.setText("");
-            cmdDBOkay.setEnabled(false);
-            cmdDBBrowse.setEnabled(false);
-            chkDBPass.setEnabled(false);
-            chkDBPass.setSelected(false);
-            txtDBPass.setText("");
-            txtDBPass.setEnabled(false);
+        if ( null != db ) switch (db) {
+            case "MySQL":
+            case "Oracle":
+                txtDBUser.setEnabled(true);
+                txtDBLocation.setEnabled(false);
+                txtDBLocation.setText("");
+                chkDBPass.setEnabled(true);
+                cmdDBOkay.setEnabled(true);
+                cmdDBBrowse.setEnabled(false);
+                break;
+            case "Sqlite":
+                txtDBLocation.setEnabled(true);
+                txtDBUser.setEnabled(false);
+                chkDBPass.setEnabled(false);
+                chkDBPass.setSelected(false);
+                txtDBPass.setEnabled(false);
+                txtDBPass.setText("");
+                cmdDBOkay.setEnabled(true);
+                cmdDBBrowse.setEnabled(true);
+                break;
+            default:
+                resetDBFormFields();
         }
     }//GEN-LAST:event_cboDBNameActionPerformed
 
@@ -465,7 +472,7 @@ public class frmLogin extends javax.swing.JFrame {
         String dbPass = txtDBPass.getText();
         String dbPath = txtDBLocation.getText();
 
-        if ( database == "Sqlite" ) {
+        if ( "Sqlite".equals(database) ) {
             params[0] = dbPath;
 
         }
@@ -482,8 +489,9 @@ public class frmLogin extends javax.swing.JFrame {
                 dlgDBSelector.hide();
             }
         }
-        catch ( Exception e ) {
+        catch ( SQLException e ) {
             Helper.messageDialog("Cannot connect to Database!\nPlease try again.", "Connection Failed!", 3);
+            System.err.println(e);
         }
     }//GEN-LAST:event_cmdDBOkayActionPerformed
 
@@ -538,11 +546,9 @@ public class frmLogin extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                WebLookAndFeel.install();
-                new frmLogin().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            WebLookAndFeel.install();
+            new frmLogin().setVisible(true);
         });
     }
 
