@@ -13,7 +13,7 @@ import java.sql.SQLException;
 
 /**
  *
- * @author DANEM682
+ * @author deuterium2h
  */
 public class frmRegister extends javax.swing.JFrame {
 

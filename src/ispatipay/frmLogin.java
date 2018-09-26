@@ -17,7 +17,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
- * @author DANEM682
+ * @author deuterium2h
  */
 public class frmLogin extends javax.swing.JFrame {
 

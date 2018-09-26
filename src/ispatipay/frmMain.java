@@ -12,7 +12,7 @@ import java.sql.ResultSet;
 
 /**
  *
- * @author DANEM682
+ * @author deuterium2h
  */
 public class frmMain extends javax.swing.JFrame {
 

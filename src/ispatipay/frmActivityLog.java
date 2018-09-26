@@ -14,7 +14,7 @@ import net.proteanit.sql.DbUtils;
 
 /**
  *
- * @author DANEM682
+ * @author deuterium2h
  */
 public class frmActivityLog extends javax.swing.JFrame {
 

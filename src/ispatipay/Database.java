@@ -11,7 +11,7 @@ import java.sql.DriverManager;
 
 /**
  *
- * @author DANEM682
+ * @author deuterium2h
  */
 public class Database {
 

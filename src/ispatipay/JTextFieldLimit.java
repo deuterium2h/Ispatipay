@@ -12,7 +12,7 @@ import javax.swing.text.PlainDocument;
 
 /**
  *
- * @author DANEM682
+ * @author deuterium2h
  */
 public class JTextFieldLimit extends PlainDocument {
 
