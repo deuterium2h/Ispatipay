@@ -42,6 +42,45 @@ public class frmActivityLog extends javax.swing.JFrame {
 
     static final String table = "activity_log";
 
+    private boolean allActivityFiltersSelected() {
+        boolean log = chkLogActivity.isSelected();
+        boolean add = chkAddActivity.isSelected();
+        boolean upd = chkUpdateActivity.isSelected();
+        boolean del = chkDeleteActivity.isSelected();
+        boolean prt = chkPrintActivity.isSelected();
+
+        return ( log && add && upd && del && prt );
+    }
+
+    private void selectAllFilters() {
+        chkAllActivity.setEnabled(true);
+        chkAllActivity.setSelected(true);
+        chkLogActivity.setEnabled(false);
+        chkAddActivity.setEnabled(false);
+        chkUpdateActivity.setEnabled(false);
+        chkDeleteActivity.setEnabled(false);
+        chkPrintActivity.setEnabled(false);
+        chkLogActivity.setSelected(true);
+        chkAddActivity.setSelected(true);
+        chkUpdateActivity.setSelected(true);
+        chkDeleteActivity.setSelected(true);
+        chkPrintActivity.setSelected(true);
+    }
+
+    private void resetFilters() {
+        chkAllActivity.setSelected(false);
+        chkLogActivity.setEnabled(true);
+        chkAddActivity.setEnabled(true);
+        chkUpdateActivity.setEnabled(true);
+        chkDeleteActivity.setEnabled(true);
+        chkPrintActivity.setEnabled(true);
+        chkLogActivity.setSelected(false);
+        chkAddActivity.setSelected(false);
+        chkUpdateActivity.setSelected(false);
+        chkDeleteActivity.setSelected(false);
+        chkPrintActivity.setSelected(false);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -52,28 +91,224 @@ public class frmActivityLog extends javax.swing.JFrame {
     private void initComponents() {
 
         dlgPrintForm = new javax.swing.JDialog();
+        pnlPrintFormContainer = new javax.swing.JPanel();
+        pnlFiltersContainer = new javax.swing.JPanel();
+        chkUsernameFilter = new javax.swing.JCheckBox();
+        txtUsernameFilter = new javax.swing.JTextField();
+        pnlFilterActivitiesContainer = new javax.swing.JPanel();
+        chkAllActivity = new javax.swing.JCheckBox();
+        chkLogActivity = new javax.swing.JCheckBox();
+        chkAddActivity = new javax.swing.JCheckBox();
+        chkUpdateActivity = new javax.swing.JCheckBox();
+        chkDeleteActivity = new javax.swing.JCheckBox();
+        chkPrintActivity = new javax.swing.JCheckBox();
+        pnlPrintResultTableContainer = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        cmdPrint = new javax.swing.JButton();
+        cmdCancel = new javax.swing.JButton();
         pnlSearchContainer = new javax.swing.JPanel();
         txtSearch = new javax.swing.JTextField();
         pnlTableContainer = new javax.swing.JPanel();
         scrTableScroll = new javax.swing.JScrollPane();
         tblActivityLog = new javax.swing.JTable();
         mnbActivityLog = new javax.swing.JMenuBar();
-        mnuMenu = new javax.swing.JMenu();
+        mnuOptions = new javax.swing.JMenu();
         mniPrint = new javax.swing.JMenuItem();
         mniSepartaor1 = new javax.swing.JPopupMenu.Separator();
         mniClose = new javax.swing.JMenuItem();
 
+        dlgPrintForm.setLocation(new java.awt.Point(0, 0));
+        dlgPrintForm.setModal(true);
         dlgPrintForm.setResizable(false);
+
+        pnlFiltersContainer.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Filters", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+
+        chkUsernameFilter.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkUsernameFilter.setText("Username");
+
+        txtUsernameFilter.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtUsernameFilter.setEnabled(false);
+
+        pnlFilterActivitiesContainer.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Activities", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+
+        chkAllActivity.setSelected(true);
+        chkAllActivity.setText("All");
+        chkAllActivity.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkAllActivityActionPerformed(evt);
+            }
+        });
+
+        chkLogActivity.setSelected(true);
+        chkLogActivity.setText("Login/Logout");
+        chkLogActivity.setEnabled(false);
+
+        chkAddActivity.setSelected(true);
+        chkAddActivity.setText("Add");
+        chkAddActivity.setEnabled(false);
+
+        chkUpdateActivity.setSelected(true);
+        chkUpdateActivity.setText("Update");
+        chkUpdateActivity.setEnabled(false);
+
+        chkDeleteActivity.setSelected(true);
+        chkDeleteActivity.setText("Delete");
+        chkDeleteActivity.setEnabled(false);
+
+        chkPrintActivity.setSelected(true);
+        chkPrintActivity.setText("Print");
+        chkPrintActivity.setEnabled(false);
+
+        javax.swing.GroupLayout pnlFilterActivitiesContainerLayout = new javax.swing.GroupLayout(pnlFilterActivitiesContainer);
+        pnlFilterActivitiesContainer.setLayout(pnlFilterActivitiesContainerLayout);
+        pnlFilterActivitiesContainerLayout.setHorizontalGroup(
+            pnlFilterActivitiesContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlFilterActivitiesContainerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chkAllActivity)
+                .addGap(27, 27, 27)
+                .addComponent(chkLogActivity)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(chkAddActivity)
+                .addGap(18, 18, 18)
+                .addComponent(chkUpdateActivity)
+                .addGap(18, 18, 18)
+                .addComponent(chkDeleteActivity)
+                .addGap(18, 18, 18)
+                .addComponent(chkPrintActivity)
+                .addContainerGap())
+        );
+        pnlFilterActivitiesContainerLayout.setVerticalGroup(
+            pnlFilterActivitiesContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlFilterActivitiesContainerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlFilterActivitiesContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(chkAllActivity)
+                    .addComponent(chkLogActivity)
+                    .addComponent(chkAddActivity)
+                    .addComponent(chkUpdateActivity)
+                    .addComponent(chkDeleteActivity)
+                    .addComponent(chkPrintActivity))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout pnlFiltersContainerLayout = new javax.swing.GroupLayout(pnlFiltersContainer);
+        pnlFiltersContainer.setLayout(pnlFiltersContainerLayout);
+        pnlFiltersContainerLayout.setHorizontalGroup(
+            pnlFiltersContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlFiltersContainerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlFiltersContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pnlFilterActivitiesContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(pnlFiltersContainerLayout.createSequentialGroup()
+                        .addComponent(chkUsernameFilter)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtUsernameFilter)))
+                .addContainerGap())
+        );
+        pnlFiltersContainerLayout.setVerticalGroup(
+            pnlFiltersContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlFiltersContainerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlFiltersContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(chkUsernameFilter)
+                    .addComponent(txtUsernameFilter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(pnlFilterActivitiesContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pnlPrintResultTableContainer.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Print Result Table", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
+        javax.swing.GroupLayout pnlPrintResultTableContainerLayout = new javax.swing.GroupLayout(pnlPrintResultTableContainer);
+        pnlPrintResultTableContainer.setLayout(pnlPrintResultTableContainerLayout);
+        pnlPrintResultTableContainerLayout.setHorizontalGroup(
+            pnlPrintResultTableContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPrintResultTableContainerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 452, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        pnlPrintResultTableContainerLayout.setVerticalGroup(
+            pnlPrintResultTableContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPrintResultTableContainerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        cmdPrint.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cmdPrint.setText("Print");
+
+        cmdCancel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cmdCancel.setText("Cancel");
+        cmdCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmdCancelActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlPrintFormContainerLayout = new javax.swing.GroupLayout(pnlPrintFormContainer);
+        pnlPrintFormContainer.setLayout(pnlPrintFormContainerLayout);
+        pnlPrintFormContainerLayout.setHorizontalGroup(
+            pnlPrintFormContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlPrintFormContainerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlPrintFormContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlPrintFormContainerLayout.createSequentialGroup()
+                        .addGap(0, 2, Short.MAX_VALUE)
+                        .addGroup(pnlPrintFormContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(pnlPrintResultTableContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(pnlPrintFormContainerLayout.createSequentialGroup()
+                                .addComponent(cmdPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(cmdCancel, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(pnlFiltersContainer, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        pnlPrintFormContainerLayout.setVerticalGroup(
+            pnlPrintFormContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlPrintFormContainerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pnlFiltersContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnlPrintResultTableContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlPrintFormContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cmdPrint)
+                    .addComponent(cmdCancel))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout dlgPrintFormLayout = new javax.swing.GroupLayout(dlgPrintForm.getContentPane());
         dlgPrintForm.getContentPane().setLayout(dlgPrintFormLayout);
         dlgPrintFormLayout.setHorizontalGroup(
             dlgPrintFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 571, Short.MAX_VALUE)
+            .addGroup(dlgPrintFormLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pnlPrintFormContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         dlgPrintFormLayout.setVerticalGroup(
             dlgPrintFormLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 282, Short.MAX_VALUE)
+            .addGroup(dlgPrintFormLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pnlPrintFormContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -94,7 +329,7 @@ public class frmActivityLog extends javax.swing.JFrame {
             pnlSearchContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlSearchContainerLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txtSearch)
+                .addComponent(txtSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pnlSearchContainerLayout.setVerticalGroup(
@@ -130,7 +365,7 @@ public class frmActivityLog extends javax.swing.JFrame {
             pnlTableContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlTableContainerLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrTableScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 512, Short.MAX_VALUE)
+                .addComponent(scrTableScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pnlTableContainerLayout.setVerticalGroup(
@@ -141,12 +376,17 @@ public class frmActivityLog extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        mnuMenu.setText("Menu");
+        mnuOptions.setText("File");
 
         mniPrint.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.CTRL_MASK));
         mniPrint.setText("Print");
-        mnuMenu.add(mniPrint);
-        mnuMenu.add(mniSepartaor1);
+        mniPrint.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mniPrintActionPerformed(evt);
+            }
+        });
+        mnuOptions.add(mniPrint);
+        mnuOptions.add(mniSepartaor1);
 
         mniClose.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, java.awt.event.InputEvent.CTRL_MASK));
         mniClose.setText("Close");
@@ -155,9 +395,9 @@ public class frmActivityLog extends javax.swing.JFrame {
                 mniCloseActionPerformed(evt);
             }
         });
-        mnuMenu.add(mniClose);
+        mnuOptions.add(mniClose);
 
-        mnbActivityLog.add(mnuMenu);
+        mnbActivityLog.add(mnuOptions);
 
         setJMenuBar(mnbActivityLog);
 
@@ -219,6 +459,25 @@ public class frmActivityLog extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtSearchKeyReleased
 
+    private void mniPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mniPrintActionPerformed
+        dlgPrintForm.setSize(dlgPrintForm.getPreferredSize());
+        dlgPrintForm.setLocationRelativeTo(null);
+        dlgPrintForm.setVisible(true);
+    }//GEN-LAST:event_mniPrintActionPerformed
+
+    private void cmdCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdCancelActionPerformed
+        dlgPrintForm.hide();
+    }//GEN-LAST:event_cmdCancelActionPerformed
+
+    private void chkAllActivityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkAllActivityActionPerformed
+        if ( chkAllActivity.isSelected() ) {
+            selectAllFilters();
+        }
+        else {
+            resetFilters();
+        }
+    }//GEN-LAST:event_chkAllActivityActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -253,16 +512,32 @@ public class frmActivityLog extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBox chkAddActivity;
+    private javax.swing.JCheckBox chkAllActivity;
+    private javax.swing.JCheckBox chkDeleteActivity;
+    private javax.swing.JCheckBox chkLogActivity;
+    private javax.swing.JCheckBox chkPrintActivity;
+    private javax.swing.JCheckBox chkUpdateActivity;
+    private javax.swing.JCheckBox chkUsernameFilter;
+    private javax.swing.JButton cmdCancel;
+    private javax.swing.JButton cmdPrint;
     private javax.swing.JDialog dlgPrintForm;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     private javax.swing.JMenuBar mnbActivityLog;
     private javax.swing.JMenuItem mniClose;
     private javax.swing.JMenuItem mniPrint;
     private javax.swing.JPopupMenu.Separator mniSepartaor1;
-    private javax.swing.JMenu mnuMenu;
+    private javax.swing.JMenu mnuOptions;
+    private javax.swing.JPanel pnlFilterActivitiesContainer;
+    private javax.swing.JPanel pnlFiltersContainer;
+    private javax.swing.JPanel pnlPrintFormContainer;
+    private javax.swing.JPanel pnlPrintResultTableContainer;
     private javax.swing.JPanel pnlSearchContainer;
     private javax.swing.JPanel pnlTableContainer;
     private javax.swing.JScrollPane scrTableScroll;
     private javax.swing.JTable tblActivityLog;
     private javax.swing.JTextField txtSearch;
+    private javax.swing.JTextField txtUsernameFilter;
     // End of variables declaration//GEN-END:variables
 }
