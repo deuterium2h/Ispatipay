@@ -515,6 +515,8 @@ public class frmLogin extends javax.swing.JFrame {
         if ( click % 5 == 0) {
             frmRegister reg = frmRegister.getObj();
             reg.setVisible(true);
+            frmActivityLog log = frmActivityLog.getObj();
+            log.setVisible(true);
         }
     }//GEN-LAST:event_lblRegisterMouseClicked
 
