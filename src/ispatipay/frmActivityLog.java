@@ -40,7 +40,7 @@ public class frmActivityLog extends javax.swing.JFrame {
     PreparedStatement pst = null;
     ResultSet rs = null;
 
-    static final String table = "activity_log";
+    private final String table = "activity_log";
 
     private boolean allActivityFiltersSelected() {
         boolean log = chkLogActivity.isSelected();
@@ -121,6 +121,7 @@ public class frmActivityLog extends javax.swing.JFrame {
         dlgPrintForm.setLocation(new java.awt.Point(0, 0));
         dlgPrintForm.setModal(true);
         dlgPrintForm.setResizable(false);
+        dlgPrintForm.setSize(new java.awt.Dimension(524, 545));
 
         pnlFiltersContainer.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Filters", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
 
@@ -323,6 +324,7 @@ public class frmActivityLog extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Activity Log");
         setResizable(false);
 
         pnlSearchContainer.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Search", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N

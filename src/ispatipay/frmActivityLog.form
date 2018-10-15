@@ -10,6 +10,9 @@
         </Property>
         <Property name="modal" type="boolean" value="true"/>
         <Property name="resizable" type="boolean" value="false"/>
+        <Property name="size" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+          <Dimension value="[524, 545]"/>
+        </Property>
       </Properties>
 
       <Layout>
@@ -338,6 +341,7 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
+    <Property name="title" type="java.lang.String" value="Activity Log"/>
     <Property name="resizable" type="boolean" value="false"/>
   </Properties>
   <SyntheticProperties>
