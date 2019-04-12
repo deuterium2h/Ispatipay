@@ -239,6 +239,11 @@ public class frmLogin extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login to Ispatipay");
         setResizable(false);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         pnlContainer.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -519,6 +524,23 @@ public class frmLogin extends javax.swing.JFrame {
             log.setVisible(true);
         }
     }//GEN-LAST:event_lblRegisterMouseClicked
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        try {
+            if ( !isConnectionSet() ) {
+                System.err.println("connection is not set");
+            }
+            else {
+                System.out.println("na set na");
+            }
+        }
+        catch ( SQLException e ) {
+            e.printStackTrace();
+        }
+        catch ( Exception e ) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_formComponentShown
 
     /**
      * @param args the command line arguments
