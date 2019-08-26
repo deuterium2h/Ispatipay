@@ -8,10 +8,13 @@ package ispatipay;
 
 import com.alee.laf.WebLookAndFeel;
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -26,6 +29,7 @@ public class frmLogin extends javax.swing.JFrame {
      */
     public frmLogin() {
         initComponents();
+        connectToLastDBSession();
     }
 
     Connection conn = null;
@@ -40,6 +44,30 @@ public class frmLogin extends javax.swing.JFrame {
 
     private boolean isConnectionSet() throws SQLException {
         return ( !conn.isClosed() );
+    }
+
+    private void connectToLastDBSession() {
+
+        String database = Helper.getProperty("database");
+        String[] params = {"", ""};
+
+        if ( database != null ) {
+
+            if ( database.equals("sqlite") ) {
+                params[0] = Helper.getProperty("path");
+            }
+            else {
+
+                params[0] = Helper.getProperty("username");
+                String pass = Helper.getProperty("password");
+                String key = Helper.getKey(pass);
+                Helper.setKeyCipher(key, "DES");
+                String p = Helper.getPassword(pass);
+                params[1] = p;
+            }
+
+            conn = Database.getConnection(database, params);
+        }
     }
 
     private void selectDatabase() {
@@ -405,7 +433,6 @@ public class frmLogin extends javax.swing.JFrame {
 
     private static String[] setParams(String arg1, String arg2) {
         String[] args = {arg1, arg2, "", ""};
-        // Additional comment
         return args;
     }
     private void cmdLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdLoginActionPerformed
@@ -493,7 +520,6 @@ public class frmLogin extends javax.swing.JFrame {
 
         if ( "Sqlite".equals(database) ) {
             params[0] = dbPath;
-
         }
         else {
             params[0] = dbUser;
@@ -506,13 +532,39 @@ public class frmLogin extends javax.swing.JFrame {
             conn = Database.getConnection(database, params);
 
             try {
-                if (isConnectionSet()) {
+                if ( isConnectionSet() ) {
+
                     Helper.messageDialog("Successfully connected to Database", "Connection Success!", 1);
+                    Helper.setProperty("database", database);
+
+                    // Stores the params[0] as path if database is sqlite, else store as username
+                    if ( "Sqlite".equals(database) ) {
+                        Helper.setProperty("path", params[0]);
+                    }
+                    else {
+                        Helper.setProperty("username", params[0]);
+                    }
+
+                    // If the password is set. Encrypt the password before storing to .properties
+                    if ( params[1].length() > 0 ) {
+
+                        String cipher = "DES";
+                        String key = Helper.generateKey(cipher);
+                        Helper.setKeyCipher(key, cipher);
+                        String encrypted = Helper.encryptStr(params[1]);
+                        String password = encrypted + "~" + key;
+                        Helper.setProperty("password", password);
+                    }
+
                     dlgDBSelector.hide();
                 }
             }
-            catch (SQLException e) {
+            catch ( SQLException e ) {
                 Helper.messageDialog("Cannot connect to Database!\nPlease try again.", "Connection Failed!", 3);
+//                String key = Helper.generateKey();
+//                String password = params[1] + "|" + key;
+//                Helper.setProperty("password", password);
+                
                 System.err.println(e);
             }
         }
@@ -539,6 +591,8 @@ public class frmLogin extends javax.swing.JFrame {
     private void lblRegisterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblRegisterMouseClicked
 
         click++;
+        String dbPath = Helper.getProperty("path");
+        System.out.println(dbPath);
 
         if ( click % 5 == 0) {
             frmRegister reg = frmRegister.getObj();
@@ -556,11 +610,11 @@ public class frmLogin extends javax.swing.JFrame {
         if ( conn != null ) {
 
             try {
-                if (!isConnectionSet()) {
+                if (!isConnectionSet()) {  // Revise this. As conn != null is already met.
                     System.err.println("Connection is not set\nPlease check if database exists???");
                 }
                 else {
-                    System.out.println("Connection is currently set to 'connection type + database name'");
+                    System.out.println("Database is currently set to " + Helper.getProperty("database"));
                 }
             }
             catch (SQLException e) {

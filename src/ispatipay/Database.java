@@ -8,6 +8,7 @@ package ispatipay;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  *
@@ -52,11 +53,11 @@ public class Database {
      * A method that will set the database name and username/path, and password.
      * This will also set the static variables.
      * 
-     * @param String database
-     * @param String[] params
-     * @return Returns the connection string used to initiate a database connection.
+     * @param database Variable that contains the database used.
+     * @param params   Array that contains either path or username, and password.
+     * @return         Returns the connection string used to initiate a database connection.
      */
-    public static Connection getConnection(String database, String[] params) {
+    public static Connection getConnection( String database, String[] params ) {
 
         db = database;
         options = params;
@@ -82,8 +83,20 @@ public class Database {
 
             return conn;
         }
-        catch (Exception e) {
-            System.err.println(e);
+        catch ( SQLException e ) {
+            System.err.println(e.getMessage());
+        }
+        catch ( NullPointerException e ) {
+            System.err.println("npe sa database class");
+        }
+        catch ( ClassNotFoundException e ) {
+            System.err.println("cnf exception sa database class");
+        }
+        catch ( InstantiationException e ) {
+            System.err.println("instantiation exception sa database class");
+        }
+        catch ( IllegalAccessException e ) {
+            System.err.println("iae exception sa database class");
         }
 
         return null;
