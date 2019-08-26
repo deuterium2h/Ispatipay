@@ -405,6 +405,7 @@ public class frmLogin extends javax.swing.JFrame {
 
     private static String[] setParams(String arg1, String arg2) {
         String[] args = {arg1, arg2, "", ""};
+        // Additional comment
         return args;
     }
     private void cmdLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdLoginActionPerformed
