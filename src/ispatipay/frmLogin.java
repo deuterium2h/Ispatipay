@@ -374,6 +374,7 @@ public class frmLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_cmdSetDBActionPerformed
 
     private void txtUsernameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtUsernameKeyReleased
+
         try {
             if ( isItemsSet() && isConnectionSet() ) {
                 cmdLogin.setEnabled(true);
@@ -388,6 +389,7 @@ public class frmLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_txtUsernameKeyReleased
 
     private void txtPasswordKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPasswordKeyReleased
+
         try {
             if ( isItemsSet() && isConnectionSet() ) {
                 cmdLogin.setEnabled(true);
@@ -401,10 +403,16 @@ public class frmLogin extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtPasswordKeyReleased
 
+    private static String[] setParams(String arg1, String arg2) {
+        String[] args = {arg1, arg2, "", ""};
+        return args;
+    }
     private void cmdLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdLoginActionPerformed
+
         String user = txtUsername.getText();
         String pass = Helper.generateHash(txtPassword.getText());
         String sql = "SELECT * FROM accounts WHERE username = ? AND password = ?";
+        String[] params = setParams(user, this.getTitle() );//{user, "Log in", "Accounts", ""};
 
         try {
 
@@ -414,7 +422,9 @@ public class frmLogin extends javax.swing.JFrame {
             rs = pst.executeQuery();
 
             if ( rs.next() ) {
+
                 Helper.messageDialog("You are now logged in!", "Login success!", 1);
+                Helper.logActivity(conn, params);
                 frmMain mf = frmMain.getObj();
                 mf.setVisible(true);
                 dispose();
@@ -432,6 +442,7 @@ public class frmLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_cmdLoginActionPerformed
 
     private void cboDBNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboDBNameActionPerformed
+
         String db = (String) cboDBName.getSelectedItem();
 
         if ( null != db ) switch (db) {
@@ -460,6 +471,7 @@ public class frmLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_cboDBNameActionPerformed
 
     private void chkDBPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkDBPassActionPerformed
+
         if ( chkDBPass.isSelected() ) {
             txtDBPass.setEnabled(true);
         }
@@ -470,6 +482,7 @@ public class frmLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_chkDBPassActionPerformed
 
     private void cmdDBOkayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDBOkayActionPerformed
+
         String database = (String) cboDBName.getSelectedItem();
         String params[] = {"", ""};
 
@@ -486,17 +499,24 @@ public class frmLogin extends javax.swing.JFrame {
             params[1] = ( dbPass.length() == 0 )  ? dbUser : dbPass;
         }
 
-        conn = Database.getConnection(database, params);
+        // Ensures that the parameter is not empty before connecting to database
+        if ( params[0].length() > 0 ) {
 
-        try {
-            if ( isConnectionSet() ) {
-                Helper.messageDialog("Successfully connected to Database", "Connection Success!", 1);
-                dlgDBSelector.hide();
+            conn = Database.getConnection(database, params);
+
+            try {
+                if (isConnectionSet()) {
+                    Helper.messageDialog("Successfully connected to Database", "Connection Success!", 1);
+                    dlgDBSelector.hide();
+                }
+            }
+            catch (SQLException e) {
+                Helper.messageDialog("Cannot connect to Database!\nPlease try again.", "Connection Failed!", 3);
+                System.err.println(e);
             }
         }
-        catch ( SQLException e ) {
-            Helper.messageDialog("Cannot connect to Database!\nPlease try again.", "Connection Failed!", 3);
-            System.err.println(e);
+        else {
+            Helper.messageDialog("Please fill-up the necessary textfields!\nPlease try again.", "Connection Failed!", 2);
         }
     }//GEN-LAST:event_cmdDBOkayActionPerformed
 
@@ -505,6 +525,7 @@ public class frmLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_cmdDBCloseActionPerformed
 
     private void cmdDBBrowseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdDBBrowseActionPerformed
+
         JFileChooser fc = new JFileChooser();
         FileNameExtensionFilter ff = new FileNameExtensionFilter("SQLite Database File (.sqlite, .sqlite3, .db)", "sqlite3", "sqlite", "db");
         fc.setFileFilter(ff);
@@ -515,6 +536,7 @@ public class frmLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_cmdDBBrowseActionPerformed
 
     private void lblRegisterMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblRegisterMouseClicked
+
         click++;
 
         if ( click % 5 == 0) {
@@ -526,19 +548,30 @@ public class frmLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_lblRegisterMouseClicked
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        try {
-            if ( !isConnectionSet() ) {
-                System.err.println("connection is not set");
+
+        // This will use the previous connection value.
+        // So that connecting to database isn't needed every run
+        // Unless, it will be changed via 'Set Database'
+        if ( conn != null ) {
+
+            try {
+                if (!isConnectionSet()) {
+                    System.err.println("Connection is not set\nPlease check if database exists???");
+                }
+                else {
+                    System.out.println("Connection is currently set to 'connection type + database name'");
+                }
             }
-            else {
-                System.out.println("na set na");
+            catch (SQLException e) {
+                e.printStackTrace();
             }
-        }
-        catch ( SQLException e ) {
-            e.printStackTrace();
-        }
-        catch ( Exception e ) {
-            e.printStackTrace();
+            catch (NullPointerException e) {
+                System.out.println("npe");
+                e.printStackTrace();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }//GEN-LAST:event_formComponentShown
 

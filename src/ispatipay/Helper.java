@@ -93,10 +93,10 @@ public class Helper {
      * @param message A String that was passed as the message of the MessageDialog.
      * @param title A String that was passed as the title for the MessageDialog. 
      * @param icon integer that was passed.<br>
-     *  0 = QUESTION_MESSAGE<br>
+     *  0 = ERROR_MESSAGE<br>
      *  1 = INFORMATION_MESSAGE<br>
      *  2 = WARNING_MESSAGE<br>
-     *  4 = ERROR_MESSAGE
+     *  3 = QUESTION_MESSAGE<br>
      */
     public static void messageDialog( String message, String title, int icon ) {
         javax.swing.JOptionPane.showMessageDialog(null, message, title, icon);
@@ -118,7 +118,6 @@ public class Helper {
      * 
      * @param pst PreparedStatement instance that was passed.
      * @param rs ResultSet instance that was passed.
-     * @throws SQLException Throws SQLException if both are not Instantiated/Defined.
      */
     public static void closeIfSqlite( PreparedStatement pst, ResultSet rs ) {
 
@@ -151,7 +150,7 @@ public class Helper {
      * 
      * @param jtable Pass the JTable to be updated.
      * @param conn Connection instance
-     * @param table  Pass the table that the JTable will use as a model.
+     * @param table Pass the table that the JTable will use as a model.
      */
     public static void loadTable( javax.swing.JTable jtable, Connection conn, String table ) {
 
@@ -176,6 +175,52 @@ public class Helper {
             catch (SQLException e) {
                 System.err.println(e);
             }
+        }
+    }
+
+    /**
+     * Logs the activity performed to activity_log.<BR>
+     * 
+     * @param conn Connection instance.
+     * @param params An array that contains field values that will be logged in activity_log table.
+     *  params[0] = Username.<BR>
+     *  params[1] = Action Performed (Add, Update, Delete, Logged in, Logged out).<BR>
+     *  params[2] = Affected Table.<BR>
+     *  params[3] = Affected Table item.
+     */
+    public static void logActivity ( Connection conn, String[] params ) {
+
+        String sql = "INSERT INTO activity_log ( user, action, affected_table, affected_table_item, logged_at ) "
+                   + "VALUES (?, ?, ?, ?, ?)";
+
+        String currTime = Helper.getTimestamp();
+        PreparedStatement pst = null;
+        ResultSet rs = null;    
+
+        try {
+
+            pst = conn.prepareStatement(sql);
+
+            // Loops through params[] items to populate fields
+            for ( int i = 0; i < params.length; i++ ) {
+                int j = i + 1;
+                pst.setString(j, params[i]);
+            }
+
+            pst.setString(5, currTime);
+            pst.execute();
+        }
+        catch ( SQLException e ) {
+            e.printStackTrace();
+        }
+        catch ( NullPointerException e ) {
+            e.printStackTrace();
+        }
+        catch ( Exception e ) {
+            e.printStackTrace();
+        }
+        finally {
+            Helper.closeIfSqlite(pst, rs);
         }
     }
 }

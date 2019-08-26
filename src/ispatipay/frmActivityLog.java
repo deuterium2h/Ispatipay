@@ -13,7 +13,18 @@ import java.sql.SQLException;
 import net.proteanit.sql.DbUtils;
 
 /**
- *
+ * To Do:
+ * 
+ * Filters:
+ * log id, Username, Level, Action, Table (check box)
+ * Sort:
+ * log id, Username, Level, Action, table, timestamp (check box)
+
+ * Activity Log table:
+ * log id, username, level, action, table, item affected*, timestamp.
+ * -(*) a pivot table??? or get the id of the affected item. as there will be a
+ *      table where it lists all record???? not all, but only the required stuff 
+ *      for reporting purposes only
  * @author deuterium2h
  */
 public class frmActivityLog extends javax.swing.JFrame {
@@ -108,6 +119,11 @@ public class frmActivityLog extends javax.swing.JFrame {
         cmdCancel = new javax.swing.JButton();
         pnlSearchContainer = new javax.swing.JPanel();
         txtSearch = new javax.swing.JTextField();
+        jCheckBox1 = new javax.swing.JCheckBox();
+        jCheckBox2 = new javax.swing.JCheckBox();
+        jCheckBox3 = new javax.swing.JCheckBox();
+        jCheckBox4 = new javax.swing.JCheckBox();
+        jCheckBox5 = new javax.swing.JCheckBox();
         pnlTableContainer = new javax.swing.JPanel();
         scrTableScroll = new javax.swing.JScrollPane();
         tblActivityLog = new javax.swing.JTable();
@@ -327,7 +343,7 @@ public class frmActivityLog extends javax.swing.JFrame {
         setTitle("Activity Log");
         setResizable(false);
 
-        pnlSearchContainer.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Search", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+        pnlSearchContainer.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Filters", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
 
         txtSearch.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtSearch.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -336,27 +352,58 @@ public class frmActivityLog extends javax.swing.JFrame {
             }
         });
 
+        jCheckBox1.setText("jCheckBox1");
+
+        jCheckBox2.setText("jCheckBox2");
+
+        jCheckBox3.setText("jCheckBox3");
+
+        jCheckBox4.setText("jCheckBox4");
+
+        jCheckBox5.setText("jCheckBox5");
+
         javax.swing.GroupLayout pnlSearchContainerLayout = new javax.swing.GroupLayout(pnlSearchContainer);
         pnlSearchContainer.setLayout(pnlSearchContainerLayout);
         pnlSearchContainerLayout.setHorizontalGroup(
             pnlSearchContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlSearchContainerLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txtSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+                .addGroup(pnlSearchContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlSearchContainerLayout.createSequentialGroup()
+                        .addComponent(jCheckBox1)
+                        .addGap(18, 18, 18)
+                        .addComponent(jCheckBox2)
+                        .addGap(18, 18, 18)
+                        .addComponent(jCheckBox3)
+                        .addGap(18, 18, 18)
+                        .addComponent(jCheckBox4)
+                        .addGap(18, 18, 18)
+                        .addComponent(jCheckBox5)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(txtSearch, javax.swing.GroupLayout.DEFAULT_SIZE, 657, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pnlSearchContainerLayout.setVerticalGroup(
             pnlSearchContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlSearchContainerLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlSearchContainerLayout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(pnlSearchContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jCheckBox2)
+                    .addComponent(jCheckBox1)
+                    .addComponent(jCheckBox3)
+                    .addComponent(jCheckBox4)
+                    .addComponent(jCheckBox5))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
                 .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         tblActivityLog.setAutoCreateRowSorter(true);
         tblActivityLog.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
             },
             new String [] {
                 "Title 1", "Title 2", "Title 3", "Title 4"
@@ -434,6 +481,9 @@ public class frmActivityLog extends javax.swing.JFrame {
                 .addComponent(pnlTableContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+
+        pnlSearchContainer.getAccessibleContext().setAccessibleName("Filters");
+        pnlSearchContainer.getAccessibleContext().setAccessibleDescription("");
 
         pack();
         setLocationRelativeTo(null);
@@ -569,6 +619,11 @@ public class frmActivityLog extends javax.swing.JFrame {
     private javax.swing.JButton cmdCancel;
     private javax.swing.JButton cmdPrint;
     private javax.swing.JDialog dlgPrintForm;
+    private javax.swing.JCheckBox jCheckBox1;
+    private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox jCheckBox3;
+    private javax.swing.JCheckBox jCheckBox4;
+    private javax.swing.JCheckBox jCheckBox5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JMenuBar mnbActivityLog;
